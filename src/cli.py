@@ -147,13 +147,15 @@ if __name__ == "__main__":
         topic = Prompt.ask("Enter a business idea to analyze")
 
         if topic:
-
             analyze(topic, json_mode=False, depth=5, provider="gemini")
+        
+        input("\nPress Enter to exit...")
+    else:
 
         
 
-        input("\nPress Enter to exit...")
+                main()
 
-    else:
+        
 
-        app()
+        
