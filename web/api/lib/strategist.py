@@ -120,10 +120,16 @@ class Strategist:
             "top_pain_points": ["string", "string", "string"],
             "recommended_angle": "string (Positioning)",
             "marketing_playbook": {{
-                "traditional": "string (SEO/Content strategy)",
-                "viral": "string (Rage-bait/TikTok strategy)",
-                "guerrilla": "string (Direct sales/Reddit DM strategy)"
-            }}
+                "traditional": "string",
+                "viral": "string",
+                "guerrilla": "string"
+            }},
+            "key_insights": [
+                {{
+                    "source_title": "string (Title of the source)",
+                    "insight": "string (One sentence on what this source revealed)"
+                }}
+            ]
         }}
         """
 

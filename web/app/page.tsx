@@ -220,6 +220,23 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Insights Section */}
+              {result.report.key_insights && result.report.key_insights.length > 0 && (
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                  <h4 className="flex items-center gap-2 font-bold mb-4 text-purple-400">
+                    <Search className="w-4 h-4" /> Why this Score? (Evidence)
+                  </h4>
+                  <ul className="space-y-3">
+                    {result.report.key_insights.map((insight: any, i: number) => (
+                      <li key={i} className="text-sm text-white/80 border-l-2 border-purple-500/50 pl-4 py-1">
+                        <span className="block font-bold text-white/40 text-xs mb-1">{insight.source_title}</span>
+                        "{insight.insight}"
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {/* Sources Section */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
                 <h4 className="flex items-center gap-2 font-bold mb-6 text-cyan-400">
