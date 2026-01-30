@@ -1,18 +1,34 @@
-from pytrends.request import TrendReq
-import pandas as pd
+try:
+    from pytrends.request import TrendReq
+    import pandas as pd
+    HAS_PYTRENDS = True
+except ImportError:
+    HAS_PYTRENDS = False
+
 from typing import Dict, List
 import time
 
 class TrendScout:
     def __init__(self):
         # hl='en-US', tz=360 matches US/English settings
-        # Removing custom retry logic to avoid urllib3 deprecation issues
-        self.pytrends = TrendReq(hl='en-US', tz=360)
+        if HAS_PYTRENDS:
+            # Removing custom retry logic to avoid urllib3 deprecation issues
+            self.pytrends = TrendReq(hl='en-US', tz=360)
+        else:
+            self.pytrends = None
 
     def analyze(self, topic: str) -> Dict:
         """
         Fetch 'Interest Over Time' and 'Related Queries' for a topic.
         """
+        if not HAS_PYTRENDS:
+            return {
+                "trajectory": "Unknown (Lite Mode)",
+                "interest_points": [],
+                "rising_queries": [],
+                "status": "Skipped (Serverless Optimization)"
+            }
+
         print(f"[*] TrendScout: Analyzing '{topic}'...")
         try:
             # Build payload
