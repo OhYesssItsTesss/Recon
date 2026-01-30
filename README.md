@@ -21,7 +21,7 @@ It doesn't just guess. It **finds the pain points** (people complaining) and gen
 ### Option A: I just want to run it (Windows .exe)
 *Best for non-coders.*
 
-1.  **Download:** Go to the [Releases Page](https://github.com/YourName/recon/releases) and download `Recon.exe`.
+1.  **Download:** Go to the [Releases Page](https://github.com/OhYesssItsTesss/Recon/releases) and download `Recon.exe`.
 2.  **Run:** Double-click `Recon.exe`.
 3.  **First Time:** It will ask for your AI Key (Gemini is free). Paste it in.
 4.  **Analyze:** Type `recon analyze "Your Idea"` and hit Enter.
@@ -30,8 +30,8 @@ It doesn't just guess. It **finds the pain points** (people complaining) and gen
 *Best for coders and contributors.*
 
 ```bash
-git clone https://github.com/YourName/recon.git
-cd recon
+git clone https://github.com/OhYesssItsTesss/Recon.git
+cd Recon
 pip install -r requirements.txt
 python src/cli.py analyze "Idea"
 ```
