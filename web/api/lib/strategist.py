@@ -2,7 +2,8 @@ import os
 import json
 try:
     import keyring
-except ImportError:
+except (ImportError, Exception):
+    # Keyring might fail to import on serverless/linux environments
     keyring = None
 from typing import Dict, List, Optional
 
@@ -45,12 +46,18 @@ class Strategist:
         env_key_name = f"{self.provider.upper()}_API_KEY"
         api_key = os.getenv(env_key_name)
         
+        print(f"[DEBUG] Provider: {self.provider}")
+        print(f"[DEBUG] Searching for Env Var: {env_key_name}")
+        print(f"[DEBUG] Env Var Found: {'YES' if api_key else 'NO'}")
+
         # 2. Try Keyring (Local Dev fallback)
         if not api_key and keyring:
             try:
                 api_key = keyring.get_password("ReconCLI", env_key_name)
-            except Exception:
-                # Keyring might fail on headless servers
+                if api_key:
+                    print(f"[DEBUG] Key found in Keyring.")
+            except Exception as e:
+                print(f"[DEBUG] Keyring failed: {e}")
                 pass
         
         if not api_key:
