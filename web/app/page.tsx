@@ -220,6 +220,34 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Sources Section */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <h4 className="flex items-center gap-2 font-bold mb-6 text-cyan-400">
+                  <LinkIcon className="w-4 h-4" /> Sources Researched
+                </h4>
+                <div className="space-y-4">
+                  {result.sources && result.sources.length > 0 ? (
+                    result.sources.map((src: any, i: number) => (
+                      <a 
+                        key={i} 
+                        href={src.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block p-4 bg-black/20 border border-white/5 rounded-xl hover:border-cyan-500/30 transition-all group"
+                      >
+                        <div className="flex justify-between items-start gap-4">
+                          <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">{src.title}</span>
+                          <LinkIcon className="w-3 h-3 text-white/20 group-hover:text-cyan-500 transition-colors flex-shrink-0 mt-1" />
+                        </div>
+                        <p className="text-xs text-white/30 truncate mt-1">{src.url}</p>
+                      </a>
+                    ))
+                  ) : (
+                    <p className="text-sm text-white/30 italic">No direct sources found for this topic.</p>
+                  )}
+                </div>
+              </div>
+
               {/* Marketing Playbook */}
               <div className="bg-cyan-900/10 border border-cyan-500/20 rounded-2xl p-8">
                 <h4 className="text-xl font-bold mb-6 text-cyan-400">The Marketing Playbook</h4>

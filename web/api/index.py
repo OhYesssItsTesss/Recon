@@ -61,7 +61,8 @@ async def analyze_topic(request: AnalysisRequest):
         return {
             "topic": request.topic,
             "trends": trend_data,
-            "report": report
+            "report": report,
+            "sources": discussions
         }
         
     except Exception as e:

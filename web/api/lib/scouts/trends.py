@@ -22,14 +22,35 @@ class TrendScout:
         Fetch 'Interest Over Time' and 'Related Queries' for a topic.
         """
         if not HAS_PYTRENDS:
+            # Fallback to News Volume as a proxy for Trends
+            try:
+                from duckduckgo_search import DDGS
+                with DDGS() as ddgs:
+                    # Search news for the last month
+                    news_results = list(ddgs.news(topic, max_results=5, timelimit='m'))
+                    
+                    if len(news_results) >= 3:
+                        trajectory = "Rising (News Proxy) 📈"
+                    elif len(news_results) > 0:
+                        trajectory = "Active (News Proxy) ➡️"
+                    else:
+                        trajectory = "Cold (News Proxy) 📉"
+                        
+                    return {
+                        "trajectory": trajectory,
+                        "interest_points": [],
+                        "rising_queries": [r['title'][:40] for r in news_results[:3]],
+                        "status": "Success (News Fallback)"
+                    }
+            except Exception:
+                pass
+
             return {
                 "trajectory": "Unknown (Lite Mode)",
                 "interest_points": [],
                 "rising_queries": [],
                 "status": "Skipped (Serverless Optimization)"
             }
-
-        print(f"[*] TrendScout: Analyzing '{topic}'...")
         try:
             # Build payload
             self.pytrends.build_payload(kw_list=[topic], timeframe='today 12-m', geo='US')

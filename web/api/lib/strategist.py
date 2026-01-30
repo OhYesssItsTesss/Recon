@@ -14,12 +14,15 @@ class AIDriver:
 
 class GeminiDriver(AIDriver):
     def __init__(self, api_key: str):
-        import google.generativeai as genai
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-2.0-flash')
+        # Using the new google-genai SDK
+        from google import genai
+        self.client = genai.Client(api_key=api_key)
 
     def generate(self, prompt: str) -> str:
-        response = self.model.generate_content(prompt)
+        response = self.client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=prompt
+        )
         return response.text
 
 class OpenAIDriver(AIDriver):
