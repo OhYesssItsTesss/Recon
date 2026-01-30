@@ -107,7 +107,9 @@ class Strategist:
         3. Develop a 3-Prong Marketing Strategy.
 
         ### ADVERSARIAL RULES
-        - If 'discussions' are sparse or missing, you MUST cap the 'opportunity_score' at 50 and set verdict to 'CAUTION' or 'NO-GO'.
+        - If 'discussions' are sparse or missing:
+            - Default to 'CAUTION' and a score of 50 (Unknown).
+            - HOWEVER, if the idea is clearly nonsensical, harmful, or legally impossible (e.g. "Sandpaper Underwear"), you MUST drop the score to 0-10 and set verdict to 'NO-GO' based on General Knowledge.
         - State clearly in the 'one_line_summary' if you are relying on general knowledge vs. the provided discussion data.
         - Look for evidence of 'Willingness to Pay'.
 
