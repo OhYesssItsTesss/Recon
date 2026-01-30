@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+google-genai
+python-dotenv
+requests
+pytrends
+pandas
+beautifulsoup4
+duckduckgo-search
+fake-useragent
+pydantic
