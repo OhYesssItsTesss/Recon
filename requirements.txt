@@ -1,0 +1,10 @@
+typer[all]
+rich
+google-genai
+python-dotenv
+duckduckgo-search
+beautifulsoup4
+requests
+pytrends
+pandas
+fake-useragent

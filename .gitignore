@@ -1,0 +1,12 @@
+# Ignore build artifacts
+dist/
+build/
+*.spec
+
+# Ignore environment config
+.env
+.env.template
+
+# Ignore Python caches
+__pycache__/
+*.pyc
