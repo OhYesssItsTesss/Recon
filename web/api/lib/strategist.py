@@ -41,15 +41,20 @@ class Strategist:
         self._load_driver()
 
     def _load_driver(self):
-        # 1. Try Environment
-        api_key = os.getenv(f"{self.provider.upper()}_API_KEY")
+        # 1. Try Environment (Primary for Vercel/Serverless)
+        env_key_name = f"{self.provider.upper()}_API_KEY"
+        api_key = os.getenv(env_key_name)
         
-        # 2. Try Keyring (If available)
+        # 2. Try Keyring (Local Dev fallback)
         if not api_key and keyring:
-            api_key = keyring.get_password("ReconCLI", f"{self.provider.upper()}_API_KEY")
+            try:
+                api_key = keyring.get_password("ReconCLI", env_key_name)
+            except Exception:
+                # Keyring might fail on headless servers
+                pass
         
         if not api_key:
-            print(f"[!] Warning: No API Key found for {self.provider}.")
+            print(f"[!] Warning: No API Key found for {self.provider}. Checked env var '{env_key_name}' and Keyring.")
             return
 
         try:

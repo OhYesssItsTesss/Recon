@@ -37,6 +37,21 @@ async def analyze_topic(request: AnalysisRequest):
         trend_data = trend_scout.analyze(request.topic)
         discussions = web_scout.search_reddit(request.topic, limit=3)
         
+        # 1.5 Capture Lead (Vercel Log Fallback)
+        if request.email:
+            print(f"[LEAD] Topic: {request.topic} | Email: {request.email}")
+            
+        n8n_url = os.getenv("N8N_WEBHOOK_URL")
+        if n8n_url and request.email:
+            try:
+                requests.post(n8n_url, json={
+                    "email": request.email, 
+                    "topic": request.topic, 
+                    "source": "recon-web"
+                }, timeout=1)
+            except Exception as e:
+                print(f"Lead capture failed: {e}")
+
         # 2. Analyze
         report = strategist.generate_report(request.topic, trend_data, discussions)
         

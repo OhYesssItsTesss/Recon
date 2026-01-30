@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Shield, TrendingUp, AlertTriangle, CheckCircle, XCircle, Mail, Loader2, Link as LinkIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -10,10 +10,24 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState("");
+  const [savedEmail, setSavedEmail] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("recon_user_email");
+    if (stored) {
+      setEmail(stored);
+      setSavedEmail(true);
+    }
+  }, []);
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!topic) return;
+
+    if (email) {
+      localStorage.setItem("recon_user_email", email);
+      setSavedEmail(true);
+    }
 
     setLoading(true);
     setError("");
@@ -109,22 +123,41 @@ export default function Home() {
               />
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 w-5 h-5" />
-                <input 
-                  type="email"
-                  placeholder="Your email (to save reports)"
-                  className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-cyan-500/50 transition-all"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
+            <div className="flex flex-col sm:flex-row gap-4 items-start">
+              {savedEmail ? (
+                <div className="flex-1 w-full h-[54px] flex items-center px-4 bg-white/5 border border-white/10 rounded-xl">
+                  <span className="text-sm text-white/50 mr-2">Using:</span>
+                  <span className="text-white font-medium flex-1 truncate">{email}</span>
+                  <button 
+                    type="button"
+                    onClick={() => { setSavedEmail(false); setEmail(""); localStorage.removeItem("recon_user_email"); }}
+                    className="text-xs text-cyan-500 hover:text-cyan-400"
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <div className="relative flex-1 w-full">
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 w-5 h-5" />
+                    <input 
+                      type="email"
+                      required
+                      placeholder="Enter your email to unlock report"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-cyan-500/50 transition-all"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+                  <p className="text-xs text-white/30 mt-2 ml-1">🔒 No spam. I only send automations that work.</p>
+                </div>
+              )}
+              
               <button 
                 type="submit"
-                className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center justify-center gap-2 min-w-[140px]"
-                disabled={loading || !topic}
+                className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto min-w-[140px]"
+                disabled={loading || !topic || !email}
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Validate"}
               </button>
