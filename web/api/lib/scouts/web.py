@@ -53,6 +53,22 @@ class WebScout:
         except Exception as e:
             print(f"[!] HN Scout Error: {e}")
 
+        # 3. Last Resort: DuckDuckGo News (If everything else failed)
+        if not results:
+            try:
+                print(f"[*] WebScout: Fallback to DDG News for '{topic}'...")
+                from duckduckgo_search import DDGS
+                with DDGS() as ddgs:
+                    news_results = list(ddgs.news(topic, max_results=3))
+                    for news in news_results:
+                        results.append({
+                            "title": news['title'],
+                            "url": news['url'],
+                            "content": news['body'] or news['title']
+                        })
+            except Exception as e:
+                print(f"[!] DDG Fallback Error: {e}")
+
         return results
 
 if __name__ == "__main__":
