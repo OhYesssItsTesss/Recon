@@ -5,6 +5,13 @@ try:
 except ImportError:
     HAS_PYTRENDS = False
 
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    BeautifulSoup = None
+
+import requests
+
 from typing import Dict, List
 import time
 
@@ -23,26 +30,49 @@ class TrendScout:
         """
         if not HAS_PYTRENDS:
             # Fallback to News Volume as a proxy for Trends
+            # Fallback to News Volume as a proxy for Trends
             try:
-                from duckduckgo_search import DDGS
-                with DDGS() as ddgs:
-                    # Search news for the last month
-                    news_results = list(ddgs.news(topic, max_results=5, timelimit='m'))
+                if not BeautifulSoup:
+                    pass
+                
+                # Manual DDG News Search
+                # https://duckduckgo.com/?q={topic}&iar=news&ia=news
+                
+                url = "https://html.duckduckgo.com/html/"
+                data = {"q": f"{topic}", "iar": "news"}
+                headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
+                
+                resp = requests.post(url, data=data, headers=headers, timeout=5)
+                
+                rising_queries = []
+                count = 0
+                
+                if resp.status_code == 200:
+                    soup = BeautifulSoup(resp.text, 'html.parser')
+                    results = soup.find_all('div', class_='result')
+                    count = len(results)
                     
-                    if len(news_results) >= 3:
-                        trajectory = "Rising (News Proxy) 📈"
-                    elif len(news_results) > 0:
-                        trajectory = "Active (News Proxy) ➡️"
-                    else:
-                        trajectory = "Cold (News Proxy) 📉"
-                        
-                    return {
-                        "trajectory": trajectory,
-                        "interest_points": [],
-                        "rising_queries": [r['title'][:40] for r in news_results[:3]],
-                        "status": "Success (News Fallback)"
-                    }
-            except Exception:
+                    for res in results[:3]:
+                        title_tag = res.find('a', class_='result__a')
+                        if title_tag:
+                            rising_queries.append(title_tag.get_text(strip=True)[:50])
+                
+                if count >= 5:
+                    trajectory = "Rising (News Proxy) 📈"
+                elif count > 0:
+                    trajectory = "Active (News Proxy) ➡️"
+                else:
+                    trajectory = "Cold (News Proxy) 📉"
+                    
+                return {
+                    "trajectory": trajectory,
+                    "interest_points": [],
+                    "rising_queries": rising_queries,
+                    "status": "Success (News Fallback)"
+                }
+
+            except Exception as e:
+                print(f"[!] Trend Fallback Error: {e}")
                 pass
 
             return {
