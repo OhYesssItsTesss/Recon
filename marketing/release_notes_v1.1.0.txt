@@ -1,0 +1,22 @@
+Tag version: v1.1.0
+Release title: Recon v1.1.0 - The "Deep Intel" Update
+
+--- RELEASE NOTES ---
+
+## 🧠 Smarter, Deeper, and More Transparent.
+This update brings a massive upgrade to the intelligence engine, making Recon not just a validator, but a researcher that "shows its work."
+
+### ✨ New Features in v1.1.0
+- **Evidence-Based Insights:** The report now includes a "Why this Score?" section, citing specific quotes and insights from the sources it found.
+- **Source Transparency:** Direct links to every Reddit thread, Hacker News discussion, or News article analyzed.
+- **Resilient Scouting:** Added a **DuckDuckGo News Fallback**. If Reddit blocks the scan (403), Recon automatically pivots to news articles to ensure you always get data.
+- **Smart "Nonsense" Detection:** The Strategist can now distinguish between "Unknown Niche" (Score 50) and "Terrible Idea" (Score 0-10) even with sparse data.
+- **Web App Enhancements:** The Vercel deployment now includes "Remember Me" for emails and a fully responsive Sources UI.
+- **Modern AI SDK:** upgraded to `google-genai` v1.0+ for future-proof stability.
+
+### 🚀 How to Update
+- **Windows Users:** Download the new `Recon.exe` below.
+- **Developers:** `git pull origin main` && `pip install -r requirements.txt`.
+
+---
+*Stop guessing. Start knowing.*

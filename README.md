@@ -21,7 +21,7 @@ It doesn't just guess. It **finds the pain points** (people complaining) and gen
 ### Option A: Try the Web App (No Install)
 *Best for instant gratification.*
 
-👉 **[Launch Recon Web](https://recon-web.vercel.app)**
+👉 **[Launch Recon Web](https://recon-five-iota.vercel.app/)**
 *(Requires your own Gemini API Key)*
 
 ### Option B: I just want to run it (Windows .exe)
@@ -32,7 +32,7 @@ It doesn't just guess. It **finds the pain points** (people complaining) and gen
 3.  **First Time:** It will ask for your AI Key (Gemini is free). Paste it in.
 4.  **Analyze:** Type `recon analyze "Your Idea"` and hit Enter.
 
-### Option B: For Developers
+### Option C: For Developers
 *Best for coders and contributors.*
 
 ```bash
@@ -42,7 +42,7 @@ pip install -r requirements.txt
 python src/cli.py analyze "Idea"
 ```
 
-### Option C: For AI Agents
+### Option D: For AI Agents
 *Best for Gemini CLI, Claude Code, or Cursor.*
 
 Just give your Agent the link to this repo. Recon is "Agent-Ready" out of the box.
