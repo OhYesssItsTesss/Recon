@@ -2,6 +2,11 @@ import requests
 from typing import List, Dict
 import time
 
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    BeautifulSoup = None
+
 class WebScout:
     def __init__(self):
         self.user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -68,6 +73,66 @@ class WebScout:
                         })
             except Exception as e:
                 print(f"[!] DDG Fallback Error: {e}")
+
+        return results
+
+    def search_competitors(self, topic: str, limit: int = 5) -> List[Dict]:
+        """
+        Search for competitors using DuckDuckGo HTML (Manual Scrape).
+        """
+        if not BeautifulSoup:
+            print("[!] Warning: beautifulsoup4 not installed. Skipping competitor scout.")
+            return []
+
+        print(f"[*] WebScout: Hunting competitors for '{topic}'...")
+        results = []
+        queries = [f"{topic} alternatives", f"{topic} vs", f"{topic} pricing"]
+        
+        headers = {
+            "User-Agent": self.user_agent,
+            "Referer": "https://duckduckgo.com/"
+        }
+
+        try:
+            for q in queries:
+                url = "https://html.duckduckgo.com/html/"
+                data = {"q": q}
+                
+                resp = requests.post(url, data=data, headers=headers, timeout=10)
+                if resp.status_code == 200:
+                    soup = BeautifulSoup(resp.text, 'html.parser')
+                    
+                    # DDG HTML result structure
+                    # <div class="result"> <h2 class="result__title"> <a class="result__a" href="...">title</a> </h2> ... </div>
+                    
+                    search_results = soup.find_all('div', class_='result')
+                    
+                    for res in search_results:
+                        title_tag = res.find('a', class_='result__a')
+                        snippet_tag = res.find('a', class_='result__snippet')
+                        
+                        if title_tag and snippet_tag:
+                            link = title_tag.get('href')
+                            title = title_tag.get_text(strip=True)
+                            snippet = snippet_tag.get_text(strip=True)
+                            
+                            results.append({
+                                "title": title,
+                                "url": link,
+                                "content": snippet
+                            })
+                            
+                        if len(results) >= limit:
+                            break
+                else:
+                    print(f"[!] DDG Search failed: {resp.status_code}")
+                
+                if len(results) >= limit:
+                    break
+                time.sleep(1) # Be polite
+
+        except Exception as e:
+            print(f"[!] Competitor Scout Error: {e}")
 
         return results
 

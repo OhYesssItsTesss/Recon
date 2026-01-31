@@ -76,7 +76,7 @@ class Strategist:
         except ImportError as e:
             print(f"[!] Missing dependency for {self.provider}: {e}")
 
-    def generate_report(self, topic: str, trend_data: Dict, discussions: List[Dict]) -> Dict:
+    def generate_report(self, topic: str, trend_data: Dict, discussions: List[Dict], competitors: List[Dict] = []) -> Dict:
         if not self.driver:
             return {"error": f"AI Driver ({self.provider}) not initialized. Run 'recon setup' first."}
 
@@ -90,6 +90,14 @@ class Strategist:
         else:
             discussion_text = "No direct Reddit threads found."
 
+        # Prepare competitor context
+        competitor_text = ""
+        if competitors:
+            for c in competitors:
+                competitor_text += f"- {c['title']} ({c['url']}): {c['content'][:200]}\n"
+        else:
+            competitor_text = "No specific competitors found."
+
         prompt = f"""
         You are a ruthless Market Intelligence Analyst (The Strategist).
         Analyze the following data for the business idea/topic: "{topic}"
@@ -101,17 +109,20 @@ class Strategist:
         ### PART 2: QUALITATIVE DATA (Reddit Discussions)
         {discussion_text}
 
+        ### PART 3: COMPETITOR LANDSCAPE
+        {competitor_text}
+
         ### MISSION
         1. Determine if this is a viable opportunity.
-        2. Identify the visceral pain points (anger/frustration).
-        3. Develop a 3-Prong Marketing Strategy.
+        2. Identify the visceral pain points (anger/frustration) vs functional complaints.
+        3. Analyze the competition to find a gap.
+        4. Develop a 3-Prong Marketing Strategy.
 
         ### ADVERSARIAL RULES
-        - If 'discussions' are sparse or missing:
-            - Default to 'CAUTION' and a score of 50 (Unknown).
-            - HOWEVER, if the idea is clearly nonsensical, harmful, or legally impossible (e.g. "Sandpaper Underwear"), you MUST drop the score to 0-10 and set verdict to 'NO-GO' based on General Knowledge.
+        - If 'discussions' are sparse or missing, you MUST cap the 'opportunity_score' at 50 and set verdict to 'CAUTION' or 'NO-GO'.
         - State clearly in the 'one_line_summary' if you are relying on general knowledge vs. the provided discussion data.
         - Look for evidence of 'Willingness to Pay'.
+        - Do NOT conflate 'Features' with 'Pain'. Pain is emotional. Features are functional.
 
         ### OUTPUT JSON FORMAT ONLY
         {{
@@ -120,18 +131,21 @@ class Strategist:
             "market_phase": "Rising" | "Saturated" | "Dead" | "Unknown",
             "one_line_summary": "string",
             "top_pain_points": ["string", "string", "string"],
+            "competitor_landscape": [
+                {{"name": "Competitor Name", "status": "Active/Dead", "gap": "What they miss (1 sentence)"}}
+            ],
+            "swot_analysis": {{
+                "strengths": ["string"],
+                "weaknesses": ["string"],
+                "opportunities": ["string"],
+                "threats": ["string"]
+            }},
             "recommended_angle": "string (Positioning)",
             "marketing_playbook": {{
-                "traditional": "string",
-                "viral": "string",
-                "guerrilla": "string"
-            }},
-            "key_insights": [
-                {{
-                    "source_title": "string (Title of the source)",
-                    "insight": "string (One sentence on what this source revealed)"
-                }}
-            ]
+                "traditional": "string (SEO/Content strategy)",
+                "viral": "string (Rage-bait/TikTok strategy)",
+                "guerrilla": "string (Direct sales/Reddit DM strategy)"
+            }}
         }}
         """
 

@@ -36,6 +36,7 @@ async def analyze_topic(request: AnalysisRequest):
         # 1. Gather Data (Reduced depth for speed/lambda limits)
         trend_data = trend_scout.analyze(request.topic)
         discussions = web_scout.search_reddit(request.topic, limit=3)
+        competitors = web_scout.search_competitors(request.topic, limit=3)
         
         # 1.5 Capture Lead (Vercel Log Fallback)
         if request.email:
@@ -53,7 +54,7 @@ async def analyze_topic(request: AnalysisRequest):
                 print(f"Lead capture failed: {e}")
 
         # 2. Analyze
-        report = strategist.generate_report(request.topic, trend_data, discussions)
+        report = strategist.generate_report(request.topic, trend_data, discussions, competitors)
         
         if "error" in report:
             raise HTTPException(status_code=500, detail=report["error"])

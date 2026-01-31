@@ -18,7 +18,13 @@ It doesn't just guess. It **finds the pain points** (people complaining) and gen
 
 ## 🚀 How to Use (For Everyone)
 
-### Option A: I just want to run it (Windows .exe)
+### Option A: Try the Web App (No Install)
+*Best for instant gratification.*
+
+👉 **[Launch Recon Web](https://recon-web.vercel.app)**
+*(Requires your own Gemini API Key)*
+
+### Option B: I just want to run it (Windows .exe)
 *Best for non-coders.*
 
 1.  **Download:** Go to the [Releases Page](https://github.com/OhYesssItsTesss/Recon/releases) and download `Recon.exe`.

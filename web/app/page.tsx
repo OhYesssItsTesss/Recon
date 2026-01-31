@@ -91,14 +91,14 @@ export default function Home() {
       <div className="max-w-3xl mx-auto px-6 py-20">
         {/* Hero */}
         <section className="text-center mb-16">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl font-extrabold mb-6 bg-gradient-to-r from-white to-white/50 bg-clip-text text-transparent"
           >
             Stop Building Ghosts.
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -113,7 +113,7 @@ export default function Home() {
           <form onSubmit={handleAnalyze} className="space-y-4">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 w-5 h-5" />
-              <input 
+              <input
                 type="text"
                 placeholder="Enter your business idea (e.g., Uber for Dog Walkers)"
                 className="w-full bg-black/40 border border-white/10 rounded-xl py-4 pl-12 pr-4 outline-none focus:border-cyan-500/50 transition-all text-lg"
@@ -122,13 +122,13 @@ export default function Home() {
                 disabled={loading}
               />
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 items-start">
               {savedEmail ? (
                 <div className="flex-1 w-full h-[54px] flex items-center px-4 bg-white/5 border border-white/10 rounded-xl">
                   <span className="text-sm text-white/50 mr-2">Using:</span>
                   <span className="text-white font-medium flex-1 truncate">{email}</span>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => { setSavedEmail(false); setEmail(""); localStorage.removeItem("recon_user_email"); }}
                     className="text-xs text-cyan-500 hover:text-cyan-400"
@@ -140,7 +140,7 @@ export default function Home() {
                 <div className="relative flex-1 w-full">
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 w-5 h-5" />
-                    <input 
+                    <input
                       type="email"
                       required
                       placeholder="Enter your email to unlock report"
@@ -153,8 +153,8 @@ export default function Home() {
                   <p className="text-xs text-white/30 mt-2 ml-1">🔒 No spam. I only send automations that work.</p>
                 </div>
               )}
-              
-              <button 
+
+              <button
                 type="submit"
                 className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto min-w-[140px]"
                 disabled={loading || !topic || !email}
@@ -169,7 +169,7 @@ export default function Home() {
         {/* Results */}
         <AnimatePresence>
           {result && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="space-y-8"
@@ -220,6 +220,70 @@ export default function Home() {
                 </div>
               </div>
 
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <h4 className="flex items-center gap-2 font-bold mb-6 text-yellow-400">
+                  <TrendingUp className="w-4 h-4" /> Competitor Landscape
+                </h4>
+                {result.report.competitor_landscape && result.report.competitor_landscape.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                      <thead>
+                        <tr className="border-b border-white/10 text-white/40 uppercase text-xs">
+                          <th className="py-2 px-4">Name</th>
+                          <th className="py-2 px-4">Status</th>
+                          <th className="py-2 px-4">Gap / Miss</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {result.report.competitor_landscape.map((comp: any, i: number) => (
+                          <tr key={i} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                            <td className="py-3 px-4 font-bold text-white">{comp.name}</td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-1 rounded text-xs ${comp.status === 'Active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                                {comp.status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-white/60">{comp.gap}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-white/30 text-sm">No direct competitors analyzed.</p>
+                )}
+              </div>
+
+              {/* SWOT Analysis */}
+              {result.report.swot_analysis && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-green-900/10 border border-green-500/20 rounded-xl p-6">
+                    <h5 className="text-green-400 font-bold mb-3 text-sm uppercase">Strengths</h5>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-white/70">
+                      {result.report.swot_analysis.strengths?.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </div>
+                  <div className="bg-red-900/10 border border-red-500/20 rounded-xl p-6">
+                    <h5 className="text-red-400 font-bold mb-3 text-sm uppercase">Weaknesses</h5>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-white/70">
+                      {result.report.swot_analysis.weaknesses?.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </div>
+                  <div className="bg-blue-900/10 border border-blue-500/20 rounded-xl p-6">
+                    <h5 className="text-blue-400 font-bold mb-3 text-sm uppercase">Opportunities</h5>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-white/70">
+                      {result.report.swot_analysis.opportunities?.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </div>
+                  <div className="bg-yellow-900/10 border border-yellow-500/20 rounded-xl p-6">
+                    <h5 className="text-yellow-400 font-bold mb-3 text-sm uppercase">Threats</h5>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-white/70">
+                      {result.report.swot_analysis.threats?.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              )}
+
               {/* Insights Section */}
               {result.report.key_insights && result.report.key_insights.length > 0 && (
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
@@ -245,10 +309,10 @@ export default function Home() {
                 <div className="space-y-4">
                   {result.sources && result.sources.length > 0 ? (
                     result.sources.map((src: any, i: number) => (
-                      <a 
-                        key={i} 
-                        href={src.url} 
-                        target="_blank" 
+                      <a
+                        key={i}
+                        href={src.url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="block p-4 bg-black/20 border border-white/5 rounded-xl hover:border-cyan-500/30 transition-all group"
                       >

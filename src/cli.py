@@ -59,16 +59,20 @@ def analyze(topic, json_mode, depth, provider):
         
         with console.status("[bold green]Scouting Reddit (via DuckDuckGo)...[/bold green]"):
             discussions = web_scout.search_reddit(topic, limit=depth)
+            
+        with console.status("[bold green]Hunting Competitors...[/bold green]"):
+            competitors = web_scout.search_competitors(topic, limit=3)
     else:
         trend_data = trend_scout.analyze(topic)
         discussions = web_scout.search_reddit(topic, limit=depth)
+        competitors = web_scout.search_competitors(topic, limit=3)
 
     # 3. Strategize
     if not json_mode:
         with console.status("[bold purple]Strategist is thinking...[/bold purple]"):
-            report = strategist.generate_report(topic, trend_data, discussions)
+            report = strategist.generate_report(topic, trend_data, discussions, competitors)
     else:
-        report = strategist.generate_report(topic, trend_data, discussions)
+        report = strategist.generate_report(topic, trend_data, discussions, competitors)
 
     if not report or "error" in report:
         if not json_mode:
@@ -101,6 +105,37 @@ def analyze(topic, json_mode, depth, provider):
             table.add_row(point)
         console.print(table)
         
+        console.print(table)
+        
+        # Competitor Table
+        comps = report.get('competitor_landscape', [])
+        if comps:
+            comp_table = Table(title="Competitor Landscape", border_style="yellow")
+            comp_table.add_column("Name", style="bold white")
+            comp_table.add_column("Status", style="magenta")
+            comp_table.add_column("Gap", style="cyan")
+            for c in comps:
+                comp_table.add_row(c.get('name'), c.get('status'), c.get('gap'))
+            console.print(comp_table)
+
+        # SWOT Analysis
+        swot = report.get('swot_analysis', {})
+        if swot:
+            swot_table = Table(title="SWOT Analysis", border_style="blue")
+            swot_table.add_column("Category", style="bold")
+            swot_table.add_column("Points")
+            
+            for strength in swot.get('strengths', []):
+                swot_table.add_row("[green]Strengths[/green]", strength)
+            for weakness in swot.get('weaknesses', []):
+                swot_table.add_row("[red]Weaknesses[/red]", weakness)
+            for opp in swot.get('opportunities', []):
+                swot_table.add_row("[blue]Opportunities[/blue]", opp)
+            for threat in swot.get('threats', []):
+                swot_table.add_row("[yellow]Threats[/yellow]", threat)
+            
+            console.print(swot_table)
+
         # Sources Table
         if discussions:
             sources_table = Table(title="Sources Researched", border_style="dim")

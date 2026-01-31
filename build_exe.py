@@ -25,7 +25,7 @@ def build():
     # --hidden-import: Explicitly import hidden dependencies like rich or google-genai submodules
     
     cmd = [
-        "pyinstaller",
+        sys.executable, "-m", "PyInstaller",
         "--onefile",
         "--name=Recon",
         "--clean",
