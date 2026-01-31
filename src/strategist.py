@@ -15,7 +15,10 @@ class GeminiDriver(AIDriver):
         self.model = genai.GenerativeModel('gemini-2.0-flash')
 
     def generate(self, prompt: str) -> str:
-        response = self.model.generate_content(prompt)
+        response = self.model.generate_content(
+            prompt,
+            generation_config={"response_mime_type": "application/json"}
+        )
         return response.text
 
 class OpenAIDriver(AIDriver):
@@ -27,7 +30,8 @@ class OpenAIDriver(AIDriver):
     def generate(self, prompt: str) -> str:
         response = self.client.chat.completions.create(
             model="gpt-4o",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"}
         )
         return response.choices[0].message.content
 
